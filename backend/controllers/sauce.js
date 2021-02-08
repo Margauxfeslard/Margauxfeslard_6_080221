@@ -79,3 +79,50 @@ exports.getAllSauce = (req, res, next) => {
         }
     );
 };
+
+/*Si j'aime = 1, l'utilisateur aime la sauce.
+Si j'aime = 0, l'utilisateur annule ce qu'il aime ou ce qu'il n'aime pas.
+Si j'aime = -1, l'utilisateur n'aime pas la sauce.*/
+exports.likeSauce = (req, res, next) => {
+    switch(req.body.like) {
+        case 1:
+            Sauce.updateOne({_id: req.params.id,
+                _id: req.params.id,
+                likes: 1,
+                usersLiked: req.params.userId
+            })
+                .then(() => res.status(201).json({message: "Like saved !"}))
+                .catch(error => res.status(400).json({ error }));
+            break;
+        case -1:
+            Sauce.updateOne({_id: req.params.id,
+                _id: req.params.id,
+                dislikes: -1,
+                usersDisliked: req.params.userId
+            })
+                .then(() => res.status(201).json({message: "Dislike saved !"}))
+                .catch(error => res.status(400).json({ error }));
+            break;
+        case 0:
+            Sauce.findOne({ _id: req.params.id})
+                .then((sauce) => {
+                    if (sauce.usersLiked.includes(req.params.userId)) {
+                        Sauce.updateOne({_id: req.params.id}, {
+                            _id: req.params.id,
+                            likes: -1,
+                            usersLiked: req.body.userId
+                        })
+                    } else if (sauce.usersDisliked.includes(req.params.userId)) {
+                        Sauce.updateOne({_id: req.params.id}, {
+                            _id: req.params.id,
+                            dislikes: -1,
+                            usersDisliked: req.body.userId
+                        })
+                    }
+                })
+                .catch(error => res.status(400).json({ error }))
+            break
+        default:
+            throw new Error;
+    }
+};
