@@ -66,7 +66,7 @@ exports.deleteSauce = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
 };
 
-exports.getAllSauce = (req, res, next) => {
+exports.getAllSauces = (req, res, next) => {
     Sauce.find().then(
         (sauces) => {
             res.status(200).json(sauces);
