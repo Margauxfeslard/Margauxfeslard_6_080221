@@ -1,11 +1,11 @@
-const http = require('http');
+const https = require('https');
 const app = require('./app');
 
 const normalizePort = val => {
     const port = parseInt(val, 10);
 
     if (isNaN(port)) {
-        return val;
+        return 3000;
     }
     if (port >= 0) {
         return port;
@@ -35,7 +35,7 @@ const errorHandler = error => {
     }
 };
 
-const server = http.createServer(app);
+const server = https.createServer(app);
 
 server.on('error', errorHandler);
 server.on('listening', () => {

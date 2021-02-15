@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env.dev' });
 
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
@@ -10,7 +12,7 @@ exports.signup = (req, res, next) => {
                 password: hash
             });
             user.save()
-                .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                .then((user) => res.status(201).json(user))
                 .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
@@ -20,7 +22,7 @@ exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
             if (!user) {
-                return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+                return res.status(401).json({ error: '"Email/Mot de passe invalide" !' });
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
@@ -31,7 +33,7 @@ exports.login = (req, res, next) => {
                         userId: user._id,
                         token: jwt.sign(
                             { userId: user._id },
-                            'RANDOM_TOKEN_SECRET',
+                            process.env.JWT_TOKEN,
                             { expiresIn: '24h' }
                         )
                     });
