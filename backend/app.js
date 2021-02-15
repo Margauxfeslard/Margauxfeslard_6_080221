@@ -3,26 +3,27 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const dataDb = require('./dataDb');
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env.dev' });
 
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-mongoose.connect('mongodb+srv://'+ dataDb.userDb +':' + dataDb.passwordDb +'@cluster0.ga44c.mongodb.net/'+ dataDb.nameDb +'?retryWrites=true&w=majority\n',
+mongoose.connect("mongodb+srv://" + process.env.USERNAME+ ":" +process.env.PASSWORD + "@cluster0.ga44c.mongodb.net/" +process.env.DBNAME+ "?retryWrites=true&w=majority",
     { useNewUrlParser: true,
         useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 const app = express();
-app.use(cors());
+const corsOptions = {
+    origin: "^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
+    optionsSuccessStatus: 200,
+    allowedHeaders: 'Origin,X-Requested-With,Content,Accept,Content-Type,Authorization',
+    methods: 'GET,POST,PUT,DELETE,PATCH,OPTIONS'
+}
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
-});
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
