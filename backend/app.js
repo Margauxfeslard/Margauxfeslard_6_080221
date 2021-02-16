@@ -16,7 +16,6 @@ mongoose.connect("mongodb+srv://" + process.env.USERNAME+ ":" +process.env.PASSW
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 const app = express();
-const regexOrigin = '^https?:\/\/(localhost|127\.0\.0\.1)(:[0-9]+)?$';
 const corsOptions = {
     origin: "http://localhost:4200",
     optionsSuccessStatus: 200,

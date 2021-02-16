@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+//Gestion des erreurs de schema et erreur BDD
+const mongooseErrors = require("mongoose-errors");
+
 const sauceSchema = mongoose.Schema({
     name: { type: String, required:true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -14,4 +17,5 @@ const sauceSchema = mongoose.Schema({
     usersDisliked: { type: [String], required:true, default: [] }
 })
 
+sauceSchema.plugin(mongooseErrors);
 module.exports = mongoose.model('Sauce', sauceSchema);
