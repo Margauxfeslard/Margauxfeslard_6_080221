@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoSanitize = require('express-mongo-sanitize');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
@@ -9,7 +10,7 @@ dotenv.config({ path: './.env.dev' });
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-mongoose.connect("mongodb+srv://" + process.env.USERNAME+ ":" +process.env.PASSWORD + "@cluster0.ga44c.mongodb.net/" +process.env.DBNAME+ "?retryWrites=true&w=majority",
+mongoose.connect("mongodb+srv://" + process.env.USERNAME + ":" +process.env.PASSWORD + "@cluster0.ga44c.mongodb.net/" +process.env.DBNAME+ "?retryWrites=true&w=majority",
     { useNewUrlParser: true,
         useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -25,7 +26,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json());
+app.use(bodyParser.json()); //Transformer le corps de la requête en objet JS
+app.use(mongoSanitize());//Chercher dans les req et supprimer toutes les clés commençant par $ ou contenant "."
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);

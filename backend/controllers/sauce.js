@@ -113,7 +113,7 @@ exports.likeSauce = (req, res) => {
                 dislikes: sauce.dislikes,
                 likes: sauce.likes
             })
-                .then(() => res.status(201).json({ message: 'Sauce modifiée !' }))
+                .then((sauce) => res.status(201).json({ sauce }))
                 .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(400).json({ error }));

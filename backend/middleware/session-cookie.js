@@ -1,4 +1,4 @@
-//Attaques XSS et CSRF)
+//Attaques XSS et CSRF
 const session = require('express-session');
 
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000)
