@@ -59,7 +59,7 @@ exports.deleteSauce = (req, res) => {
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({ _id: req.params.id })
-                    .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
+                    .then(() => res.status(200).json({ message: 'Sauce deleted !'}))
                     .catch(error => res.status(400).json({ error }));
             });
         })
@@ -86,35 +86,51 @@ exports.likeSauce = (req, res) => {
         .then((sauce) => {
             switch (req.body.like) {
                 case 1:
+                    sauce.likes ++;
                     sauce.usersLiked.push(req.body.userId)
-                    sauce.likes++
+                    Sauce.updateOne({_id: req.params.id}, {
+                        likes: sauce.likes,
+                        usersLiked: sauce.usersLiked,
+                    })
+                        .then(() => res.status(201).json({message: "Like saved !"}))
+                        .catch(error => res.status(400).json({error}));
                     break;
                 case -1:
-                    sauce.usersDisliked.push(req.body.userId)
-                    sauce.dislikes++
+                    sauce.dislikes++;
+                    sauce.usersDisliked.push(req.body.userId);
+                    Sauce.updateOne({_id: req.params.id}, {
+                        dislikes: sauce.dislikes,
+                        usersDisliked: sauce.usersDisliked,
+                    })
+                        .then(() => res.status(201).json({message: "Dislike saved !"}))
+                        .catch(error => res.status(400).json({error}));
                     break;
                 case 0:
-                    if (sauce.usersLiked.includes(req.params.userId)) {
+                    if (sauce.usersLiked.includes(req.body.userId)) {
                         sauce.likes--;
                         let index = sauce.usersLiked.indexOf(req.body.userId);
                         sauce.usersLiked.splice(index, 1);
-                    } else if (sauce.usersDisliked.includes(req.params.userId)) {
+                        Sauce.updateOne({_id: req.params.id}, {
+                            likes: sauce.likes,
+                            usersLiked: sauce.usersLiked,
+                        })
+                            .then(() => res.status(201).json({message: "Liked saved removed !"}))
+                            .catch(error => res.status(400).json({error}));
+                    } else if (sauce.usersDisliked.includes(req.body.userId)) {
                         sauce.dislikes--;
                         let index = sauce.usersDisliked.indexOf(req.body.userId);
                         sauce.usersDisliked.splice(index, 1);
+                        Sauce.updateOne({_id: req.params.id}, {
+                            dislikes: sauce.dislikes,
+                            usersDisliked: sauce.usersDisliked,
+                        })
+                            .then(() => res.status(201).json({message: "Dislike saved removed !"}))
+                            .catch(error => res.status(400).json({error}));
                     }
                     break;
                 default:
-                    throw new Error;
+                    res.status(400).json({ message: 'Didn\'t find the right case !' });
             }
-            Sauce.updateOne({ _id: req.params.id }, {
-                usersLiked: sauce.usersLiked,
-                usersDisliked: sauce.usersDisliked,
-                dislikes: sauce.dislikes,
-                likes: sauce.likes
-            })
-                .then((sauce) => res.status(201).json({ sauce }))
-                .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(400).json({ error }));
 }

@@ -19,7 +19,8 @@ Run the command :
 
  ```
 $ cd frontend/
-$ ng serve
+$ npm install
+$ npm start
 ```
 
 The app's frontend is visible on http://localhost:4200/.
@@ -28,8 +29,7 @@ The app's frontend is visible on http://localhost:4200/.
 
  ```
 $ cd backend/
-$ npm install
-$ nodemon server.js
+$ nodemon server
 ```
 
 The server should run on http://localhost:3000/.

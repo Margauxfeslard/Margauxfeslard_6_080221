@@ -8,8 +8,7 @@ dotenv.config({ path: './.env.dev' });
 exports.signup = (req, res, next) => {
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!regexPassword.test(req.body.password)){
-        res.status(406).json({ message: 'Mininum 8 charactères avec au moins une majuscule, un symbole et un chiffre !' })
-        return false
+        return res.status(406).json({ message: 'Password should be 8 characters with at least 1 number, 1 symbol and 1 uppercase letter !' })
     }
     bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -26,10 +25,10 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })
+    User.findOne({email: ebg13(req.body.email, 12)})
         .then(user => {
             if (!user) {
-                return res.status(401).json({ error: 'Email/Mot de passe invalide !' });
+                return res.status(401).json({ error: 'Email/Mot de passe invalid !' });
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
