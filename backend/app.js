@@ -10,7 +10,7 @@ dotenv.config({ path: './.env.dev' });
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-mongoose.connect("mongodb+srv://" + process.env.USERNAME + ":" +process.env.PASSWORD + "@cluster0.ga44c.mongodb.net/" +process.env.DBNAME+ "?retryWrites=true&w=majority",
+mongoose.connect("mongodb+srv://" + process.env.USERNAME + ":" +process.env.PASSWORD + "@cluster0.5cf5x.mongodb.net/" +process.env.DBNAME+ "?retryWrites=true&w=majority",
     { useNewUrlParser: true,
         useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))

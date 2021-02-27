@@ -1,11 +1,15 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const validator = require("validator");
 const User = require('../models/User');
 const dotenv = require('dotenv');
 const ebg13 = require('ebg13');
 dotenv.config({ path: './.env.dev' });
 
 exports.signup = (req, res, next) => {
+    if (validator.isEmail(req.body.email) !== true) {
+        return res.status(401).json({error: "Email non valid"});
+    }
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!regexPassword.test(req.body.password)){
         return res.status(406).json({ message: 'Password should be 8 characters with at least 1 number, 1 symbol and 1 uppercase letter !' })
@@ -17,9 +21,9 @@ exports.signup = (req, res, next) => {
                 password: hash
             });
         user.email = ebg13(req.body.email, 12);
-            user.save()
-                .then((user) => res.status(201).json(user))
-                .catch(error => res.status(400).json({ error }));
+        user.save()
+            .then(() => res.status(201).json({ message: 'User created!' }))
+            .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
 };
@@ -45,7 +49,6 @@ exports.login = (req, res, next) => {
                     });
                 })
                 .catch(error => res.status(500).json({ error }));
-
         })
         .catch(error => res.status(500).json({ error }));
 };

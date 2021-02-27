@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 //Gestion des erreurs de schema et erreur BDD
 const mongooseErrors = require("mongoose-errors");
 
